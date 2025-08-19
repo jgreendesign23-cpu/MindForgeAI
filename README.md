@@ -1,0 +1,2 @@
+# MindForgeAI
+Marketing and advertising
