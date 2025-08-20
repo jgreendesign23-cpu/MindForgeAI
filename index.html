@@ -5,6 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>MindForgeAI</title>
   <meta name="description" content="Practical AI tools for makers, freelancers, and small teams." />
+
+  <!-- Plausible (privacy-friendly analytics). Update data-domain if you add a custom domain. -->
+  <script defer data-domain="jgreendesign23-cpu.github.io" src="https://plausible.io/js/script.js"></script>
+
   <style>
     :root{
       --ink:#0b1220;
@@ -23,7 +27,7 @@
     html,body{height:100%}
     body{
       margin:0; color:#e5e7eb; background:var(--bg);
-      font:16px/1.6 system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Apple Color Emoji","Segoe UI Emoji";
+      font:16px/1.6 system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial,"Apple Color Emoji","Segoe UI Emoji";
     }
     header{padding:28px 20px}
     .wrap{max-width:1100px;margin:0 auto;padding:0 20px}
@@ -47,12 +51,17 @@
     button{
       background:linear-gradient(120deg,#22d3ee,#60a5fa); color:#03101c; font-weight:800;
       border:0; padding:12px 16px; border-radius:12px; cursor:pointer;
+      transition:opacity .15s ease;
     }
-    button:active{transform:translateY(1px)}
+    button[disabled]{opacity:.6; cursor:not-allowed}
     .note{font-size:13px;color:#94a3b8}
     .ok{color:#34d399}
     footer{padding:20px;text-align:center;color:#94a3b8}
     .pill{display:inline-block;padding:6px 10px;border:1px solid var(--line);border-radius:999px}
+    .hide{display:none !important}
+    .status{margin:.6rem 0 0}
+    .status.ok{color:#34d399}
+    .status.err{color:#fca5a5}
   </style>
 </head>
 <body>
@@ -83,24 +92,33 @@
         </div>
       </div>
 
-      <!-- Waitlist / contact form (Formspree—no backend needed) -->
+      <!-- Waitlist / contact form -->
       <form class="card" id="waitlist"
-            action="https://formspree.io/f/your_form_id"
-            method="POST">
+            action="https://formspree.io/f/xdkdrzgq"
+            method="POST" novalidate>
         <h2 style="margin:0 0 8px">Join the waitlist</h2>
         <p class="note" style="margin-top:0">Get early access + a setup call.</p>
-        <label>Name</label>
-        <input name="name" required placeholder="Your name"/>
-        <label>Email</label>
-        <input name="email" type="email" required placeholder="you@company.com"/>
-        <label>What would you build with AI?</label>
-        <textarea name="message" rows="4" placeholder="A quick note helps us tailor invites."></textarea>
+
+        <label for="name">Name</label>
+        <input id="name" name="name" required placeholder="Your name" autocomplete="name"/>
+
+        <label for="email">Email</label>
+        <input id="email" name="email" type="email" required placeholder="you@company.com" autocomplete="email"/>
+
+        <label for="message">What would you build with AI?</label>
+        <textarea id="message" name="message" rows="4" placeholder="A quick note helps us tailor invites."></textarea>
+
+        <!-- Extras -->
         <input type="hidden" name="project" value="MindForgeAI"/>
+        <input type="hidden" name="page" value="mindforge-landing"/>
+        <!-- Honeypot (spam trap) -->
+        <input class="hide" type="text" name="_gotcha" tabindex="-1" autocomplete="off"/>
+
         <div style="display:flex;gap:10px;align-items:center;margin-top:10px">
-          <button type="submit">Request invite</button>
+          <button id="submitBtn" type="submit">Request invite</button>
           <span class="note">No spam, unsubscribe anytime.</span>
         </div>
-        <p id="form-status" class="note"></p>
+        <p id="form-status" class="note status" role="status" aria-live="polite"></p>
       </form>
     </section>
 
@@ -117,27 +135,42 @@
   <footer>© 2025 MindForgeAI</footer>
 
   <script>
-    // Lightweight success/fail UX for Formspree
+    // Formspree async submit + friendly UX
     const form = document.getElementById('waitlist');
     const status = document.getElementById('form-status');
+    const btn = document.getElementById('submitBtn');
+
+    function setStatus(msg, ok=false){
+      status.textContent = msg;
+      status.classList.toggle('ok', ok);
+      status.classList.toggle('err', !ok);
+    }
+
     if (form) {
       form.addEventListener('submit', async (e)=>{
         e.preventDefault();
-        status.textContent = 'Sending…';
+        setStatus('Sending…');
+        btn.disabled = true;
+
         try{
           const resp = await fetch(form.action, {
             method: form.method,
             headers: { 'Accept': 'application/json' },
             body: new FormData(form)
           });
+
           if (resp.ok) {
-            status.textContent = '✅ Thanks! Check your inbox for a confirmation.';
+            setStatus('✅ Thanks! Check your inbox for a confirmation.', true);
             form.reset();
           } else {
-            status.textContent = '❌ Something went wrong. Try again in a moment.';
+            const data = await resp.json().catch(()=>null);
+            const msg = data?.errors?.[0]?.message || 'Something went wrong. Try again in a moment.';
+            setStatus('❌ ' + msg);
           }
         }catch(err){
-          status.textContent = '❌ Network error. Please try again.';
+          setStatus('❌ Network error. Please try again.');
+        }finally{
+          btn.disabled = false;
         }
       });
     }
