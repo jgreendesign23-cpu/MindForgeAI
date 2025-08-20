@@ -1,136 +1,46 @@
-<!-- ============ MindForgeAI Assistant (no backend required) ============ -->
-<style>
-  .mf-bubble{position:fixed;right:18px;bottom:22px;width:64px;height:64px;border-radius:50%;
-    background:conic-gradient(from 270deg,#60a5fa 0 25%,#22d3ee 0 75%,#60a5fa 0 100%);
-    box-shadow:0 16px 40px rgba(2,6,23,.28);border:3px solid rgba(255,255,255,.9);
-    display:grid;place-items:center;cursor:pointer;z-index:30}
-  .mf-bubble .dot{width:28px;height:28px;border-radius:50%;background:#fff;display:grid;place-items:center}
-  .mf-win{position:fixed;right:16px;bottom:96px;width:min(420px,calc(100vw - 32px));
-    max-height:min(70vh,680px);background:#0b1220f0;border:1px solid rgba(255,255,255,.08);
-    border-radius:18px;box-shadow:0 30px 60px rgba(2,6,23,.45);overflow:hidden;display:none;z-index:40;color:#e5e7eb}
-  .mf-head{background:linear-gradient(120deg,#22d3ee,#60a5fa);color:#03101c;
-    padding:10px 12px;display:flex;align-items:center;justify-content:space-between}
-  .mf-title{font-weight:900;letter-spacing:.2px;display:flex;gap:8px;align-items:center}
-  .mf-sub{font-weight:600;opacity:.85;font-size:12px}
-  .mf-close{background:#03101c10;border:1px solid #03101c30;color:#03101c;border-radius:999px;padding:6px 10px;cursor:pointer}
-  .mf-body{padding:12px;background:#0f172a;display:grid;grid-template-rows:1fr auto;gap:10px;height:420px}
-  .mf-stream{overflow:auto;display:flex;flex-direction:column;gap:10px}
-  .mf-msg{padding:10px 12px;border-radius:12px;border:1px solid rgba(255,255,255,.08);max-width:90%}
-  .mf-bot{background:#0b1220;border-color:#1f2937}
-  .mf-me{margin-left:auto;background:#111827;border-color:#1f2937}
-  .mf-actions{display:flex;gap:8px;flex-wrap:wrap}
-  .mf-chip{font-size:12px;background:#111827;border:1px solid #1f2937;color:#e5e7eb;padding:6px 10px;border-radius:999px;cursor:pointer}
-  .mf-input{display:flex;gap:8px;background:#0b1220;border:1px solid #1f2937;border-radius:12px;padding:6px}
-  .mf-input input{flex:1;background:transparent;border:0;color:#e5e7eb;outline:0;padding:10px}
-  .mf-btn{background:linear-gradient(120deg,#22d3ee,#60a5fa);color:#03101c;border:0;padding:10px 14px;border-radius:10px;font-weight:800;cursor:pointer}
-  .mf-note{font-size:12px;color:#94a3b8}
-</style>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>MindForgeAI</title>
+  <meta name="description" content="Practical AI tools for makers, freelancers, and small teams." />
+  <!-- your main CSS stays unchanged -->
+  <style>
+    /* ... (your existing styles here) ... */
+  </style>
+</head>
+<body>
+  <header class="wrap">
+    <!-- ... your header and content ... -->
+  </header>
 
-<div class="mf-bubble" id="mfBubble" aria-label="Open assistant"><span class="dot">🧠</span></div>
+  <main class="wrap">
+    <!-- ... your sections and forms ... -->
+  </main>
 
-<aside class="mf-win" id="mfWin" role="dialog" aria-label="MindForgeAI assistant">
-  <div class="mf-head">
-    <div>
-      <div class="mf-title">MindForgeAI <span style="font-size:16px">🧠</span></div>
-      <div class="mf-sub">Questions • Demos • Join list</div>
-    </div>
-    <button class="mf-close" id="mfClose">Close</button>
-  </div>
-  <div class="mf-body">
-    <div class="mf-stream" id="mfStream"></div>
-    <form class="mf-input" id="mfForm">
-      <input id="mfInput" type="text" placeholder="Ask about features, pricing, or setup…" autocomplete="off"/>
-      <button class="mf-btn" type="submit">Send</button>
-    </form>
-    <div class="mf-actions" style="margin-top:-6px;padding:0 2px 4px;">
-      <button class="mf-chip" data-q="What can it automate?">What can it automate?</button>
-      <button class="mf-chip" data-q="How much will it cost?">Pricing</button>
-      <button class="mf-chip" data-q="Show me an example workflow">Example</button>
-      <button class="mf-chip" data-q="Join the waitlist">Join the waitlist</button>
-    </div>
-    <div class="mf-note" style="padding-left:2px;">Tip: type an email (e.g. you@company.com) to share this chat as a lead.</div>
-  </div>
-</aside>
+  <footer>© 2025 MindForgeAI</footer>
 
-<script>
-/* --- Minimal client-side assistant with lead capture via Formspree --- */
-(function(){
-  const FSP = "https://formspree.io/f/xdkdrzgq"; // your Formspree endpoint
-  const bubble = document.getElementById("mfBubble");
-  const win    = document.getElementById("mfWin");
-  const close  = document.getElementById("mfClose");
-  const form   = document.getElementById("mfForm");
-  const input  = document.getElementById("mfInput");
-  const feed   = document.getElementById("mfStream");
-  const chips  = document.querySelectorAll(".mf-chip");
-  let transcript = [];
+  <script>
+    // Lightweight success/fail UX for Formspree
+    /* ... your existing form script ... */
+  </script>
 
-  const add = (html, who="bot")=>{
-    const div = document.createElement("div");
-    div.className = "mf-msg " + (who==="me" ? "mf-me" : "mf-bot");
-    div.innerHTML = html;
-    feed.appendChild(div);
-    feed.scrollTop = feed.scrollHeight;
-    transcript.push((who==="me"?"ME: ":"BOT: ") + div.textContent.trim());
-  };
+  <!-- ============ MindForgeAI Assistant (now inside body) ============ -->
+  <style>
+    /* ... assistant CSS exactly as you had it ... */
+  </style>
 
-  const answers = {
-    "what can it automate?":
-      "Great question! Popular automations: \n• Convert form fills → clean rows in Sheets → task in your PM tool.\n• Draft replies from a template + context → send via Gmail.\n• Turn meeting notes → SOP/checklist in Docs.\n• Route leads to CRM + notify Slack.",
-    "pricing":
-      "We’re finalizing tiers. Target: \n• Starter (solo/2 seats) under $20/mo\n• Team (most folks) $49–$99/mo\n• Business with SSO & controls. \nJoin the waitlist and we’ll send early-bird pricing.",
-    "example":
-      "Example workflow: “New Typeform lead → enrich company → add row in Sheet → email intro → Slack notify”. You’ll copy a recipe, paste a key, done.",
-    "join the waitlist":
-      "Drop your email here and I’ll log this conversation to the waitlist. Just type your email (e.g. you@company.com)."
-  };
+  <div class="mf-bubble" id="mfBubble" aria-label="Open assistant"><span class="dot">🧠</span></div>
 
-  function reply(q){
-    const t = (q||"").trim().toLowerCase();
-    if (answers[t]) return answers[t];
-    if (/\b(pricing|cost|price)\b/.test(t)) return answers["pricing"];
-    if (/automate|automation|do you do/i.test(t)) return answers["what can it automate?"];
-    if (/example|workflow|demo/i.test(t)) return answers["example"];
-    if (/waitlist|invite|early/i.test(t)) return answers["join the waitlist"];
-    return "I can help with features, pricing, examples, or add you to the waitlist. What would you like to know?";
-  }
+  <aside class="mf-win" id="mfWin" role="dialog" aria-label="MindForgeAI assistant">
+    <!-- ... assistant markup ... -->
+  </aside>
 
-  async function sendLead(email){
-    try{
-      const data = new FormData();
-      data.append("project","MindForgeAI");
-      data.append("source","assistant-widget");
-      data.append("email", email);
-      data.append("transcript", transcript.join("\n"));
-      const resp = await fetch(FSP, { method:"POST", headers:{Accept:"application/json"}, body:data });
-      if (resp.ok){ add("✅ Added! You’re on the list — we’ll reach out soon.", "bot"); transcript = []; }
-      else { add("❌ Couldn't save just now. You can also use the form on the page.", "bot"); }
-    }catch(e){ add("❌ Network hiccup — try again in a bit.", "bot"); }
-  }
+  <script>
+    /* --- assistant JS exactly as you pasted --- */
+  </script>
+  <!-- ============ /Assistant ============ -->
 
-  // UI events
-  bubble.addEventListener("click", ()=>{ win.style.display="block"; input.focus(); });
-  close.addEventListener("click", ()=> win.style.display="none");
-  chips.forEach(c => c.addEventListener("click", ()=>{ add(c.dataset.q,"me"); add(reply(c.dataset.q),"bot"); }));
-
-  form.addEventListener("submit", async (e)=>{
-    e.preventDefault();
-    const q = input.value.trim();
-    if(!q) return;
-    add(q, "me");
-    input.value = "";
-
-    // If message looks like an email, treat as lead capture
-    const em = q.match(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i);
-    if (em) { add("Saving your email and transcript…","bot"); await sendLead(em[0]); return; }
-
-    add(reply(q), "bot");
-  });
-
-  // Warm greeting
-  setTimeout(()=>{
-    add("Hey! I’m the MindForge helper. Ask me about <b>automation ideas</b>, <b>pricing</b>, or say <i>Join the waitlist</i>.");
-  }, 400);
-})();
-</script>
-<!-- ============ /Assistant ============ -->
+</body>
+</html>
