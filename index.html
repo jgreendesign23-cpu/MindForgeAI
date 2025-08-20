@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>MindForgeAI</title>
+  <meta name="description" content="Practical AI tools for makers, freelancers, and small teams." />
+  <style>
+    :root{
+      --ink:#0b1220;
+      --muted:#6b7280;
+      --bg: radial-gradient(1200px 800px at 20% -10%, #4f46e5 0%, transparent 60%),
+            radial-gradient(1000px 600px at 110% 10%, #a855f7 0%, transparent 60%),
+            #0f172a;
+      --card:#0b1220cc;
+      --line:rgba(255,255,255,.08);
+      --accent:#22d3ee;
+      --ok:#10b981;
+      --radius:18px;
+      --shadow:0 10px 30px rgba(0,0,0,.25);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0; color:#e5e7eb; background:var(--bg);
+      font:16px/1.6 system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Apple Color Emoji","Segoe UI Emoji";
+    }
+    header{padding:28px 20px}
+    .wrap{max-width:1100px;margin:0 auto;padding:0 20px}
+    .brand{display:flex;align-items:center;gap:14px}
+    .logo{font-weight:900;font-size:clamp(28px,5vw,40px);letter-spacing:.3px}
+    .chip{background:rgba(255,255,255,.08);border:1px solid var(--line);padding:6px 10px;border-radius:999px}
+    .row{display:grid;grid-template-columns:1.1fr .9fr;gap:24px;align-items:center}
+    @media (max-width:900px){.row{grid-template-columns:1fr}}
+    .card{
+      background:var(--card); border:1px solid var(--line); border-radius:var(--radius);
+      box-shadow:var(--shadow); padding:clamp(18px,2.6vw,28px)
+    }
+    h1{font-size:clamp(32px,6vw,56px); line-height:1.1; margin:6px 0 12px}
+    .lead{color:#cbd5e1; font-size:clamp(16px,2.6vw,20px)}
+    .stack{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+    label{display:block;margin:.4rem 0 .25rem}
+    input, textarea, select{
+      width:100%; padding:12px 14px; border-radius:12px; border:1px solid var(--line);
+      background:rgba(255,255,255,.06); color:#e5e7eb; outline:none;
+    }
+    button{
+      background:linear-gradient(120deg,#22d3ee,#60a5fa); color:#03101c; font-weight:800;
+      border:0; padding:12px 16px; border-radius:12px; cursor:pointer;
+    }
+    button:active{transform:translateY(1px)}
+    .note{font-size:13px;color:#94a3b8}
+    .ok{color:#34d399}
+    footer{padding:20px;text-align:center;color:#94a3b8}
+    .pill{display:inline-block;padding:6px 10px;border:1px solid var(--line);border-radius:999px}
+  </style>
+</head>
+<body>
+  <header class="wrap">
+    <div class="brand">
+      <div style="font-size:28px">🧠</div>
+      <div class="logo">MindForgeAI</div>
+    </div>
+    <div class="stack" style="margin-top:10px">
+      <span class="chip">Automate work</span>
+      <span class="chip">Smart assistants</span>
+      <span class="chip">No-code friendly</span>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="row">
+      <div class="card">
+        <h1>Ship faster with practical AI.</h1>
+        <p class="lead">
+          MindForgeAI gives makers and small teams copy-and-paste AI tools —
+          assistants, automations, and templates that actually save time.
+        </p>
+        <div class="stack" style="margin-top:14px">
+          <span class="pill">⚡ Rapid setup</span>
+          <span class="pill">🔒 Private by default</span>
+          <span class="pill">🛠️ Works with your stack</span>
+        </div>
+      </div>
+
+      <!-- Waitlist / contact form (Formspree—no backend needed) -->
+      <form class="card" id="waitlist"
+            action="https://formspree.io/f/your_form_id"
+            method="POST">
+        <h2 style="margin:0 0 8px">Join the waitlist</h2>
+        <p class="note" style="margin-top:0">Get early access + a setup call.</p>
+        <label>Name</label>
+        <input name="name" required placeholder="Your name"/>
+        <label>Email</label>
+        <input name="email" type="email" required placeholder="you@company.com"/>
+        <label>What would you build with AI?</label>
+        <textarea name="message" rows="4" placeholder="A quick note helps us tailor invites."></textarea>
+        <input type="hidden" name="project" value="MindForgeAI"/>
+        <div style="display:flex;gap:10px;align-items:center;margin-top:10px">
+          <button type="submit">Request invite</button>
+          <span class="note">No spam, unsubscribe anytime.</span>
+        </div>
+        <p id="form-status" class="note"></p>
+      </form>
+    </section>
+
+    <section class="card" style="margin-top:20px">
+      <h3 style="margin-top:0">What’s coming</h3>
+      <ul style="margin:8px 0 0 18px">
+        <li>Prebuilt “Ops Assistant” that drafts emails, SOPs, and checklists.</li>
+        <li>Lead-capture chatbot you can drop on any site in 60 seconds.</li>
+        <li>Automation recipes (Sheets ↔ Email ↔ Calendar ↔ Docs).</li>
+      </ul>
+    </section>
+  </main>
+
+  <footer>© 2025 MindForgeAI</footer>
+
+  <script>
+    // Lightweight success/fail UX for Formspree
+    const form = document.getElementById('waitlist');
+    const status = document.getElementById('form-status');
+    if (form) {
+      form.addEventListener('submit', async (e)=>{
+        e.preventDefault();
+        status.textContent = 'Sending…';
+        try{
+          const resp = await fetch(form.action, {
+            method: form.method,
+            headers: { 'Accept': 'application/json' },
+            body: new FormData(form)
+          });
+          if (resp.ok) {
+            status.textContent = '✅ Thanks! Check your inbox for a confirmation.';
+            form.reset();
+          } else {
+            status.textContent = '❌ Something went wrong. Try again in a moment.';
+          }
+        }catch(err){
+          status.textContent = '❌ Network error. Please try again.';
+        }
+      });
+    }
+  </script>
+</body>
+  </html>
